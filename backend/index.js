@@ -52,7 +52,8 @@ app.post("/users/signup", async (req, res) => {
     res.status(201).json({ message: "Signup successful", user: safeUser, token, refreshToken });
   } catch (error) {
     console.error("Signup error:", error);
-    res.status(500).json({ error: "Error creating user" });
+    if (error && error.stack) console.error(error.stack);
+    res.status(500).json({ error: error.message || "Error creating user" });
   }
 });
 
@@ -86,7 +87,7 @@ app.post("/users/login", async (req, res) => {
   } catch (error) {
     console.error("Login error:", error);
     if (error && error.stack) console.error(error.stack);
-    res.status(500).json({ error: "Error logging in" });
+    res.status(500).json({ error: error.message || "Error logging in" });
   }
 });
 
@@ -114,7 +115,8 @@ app.post('/token', async (req, res) => {
     res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
   } catch (err) {
     console.error('Refresh token error:', err);
-    return res.status(401).json({ error: 'Invalid refresh token' });
+    if (err && err.stack) console.error(err.stack);
+    return res.status(401).json({ error: err.message || 'Invalid refresh token' });
   }
 });
 
@@ -131,7 +133,7 @@ app.post('/logout', async (req, res) => {
     res.json({ message: 'Logged out' });
   } catch (err) {
     console.error('Logout error:', err);
-   
+    if (err && err.stack) console.error(err.stack);
     res.json({ message: 'Logged out' });
   }
 });
@@ -159,7 +161,8 @@ app.get("/users", verifyToken, async (req, res) => {
     res.json(users);
   } catch (error) {
     console.error("Fetch users error:", error);
-    res.status(500).json({ error: "Error fetching users" });
+    if (error && error.stack) console.error(error.stack);
+    res.status(500).json({ error: error.message || "Error fetching users" });
   }
 });
 
