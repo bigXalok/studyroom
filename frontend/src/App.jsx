@@ -52,6 +52,8 @@ export default function App() {
     const token = localStorage.getItem("token");
     if (token) {
       setView("users");
+      // set axios default header so subsequent requests include the token
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       fetchUsers();
     }
   }, []);
@@ -69,6 +71,8 @@ export default function App() {
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         if (res.data.refreshToken) localStorage.setItem("refreshToken", res.data.refreshToken);
+        // set axios default Authorization header for future requests
+        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
         setView("users");
         fetchUsers();
       } else {
@@ -93,6 +97,8 @@ export default function App() {
       const refreshToken = res.data.refreshToken;
       localStorage.setItem("token", token);
       if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+      // set axios default Authorization header for future requests
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setMessage("Login successful!");
       setView("users");
       fetchUsers();
@@ -117,8 +123,16 @@ export default function App() {
 
 
   const handleLogout = () => {
+    // Notify backend to invalidate the refresh token, then clear local state
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      axios.post(`${API_URL}/logout`, { token: refreshToken }).catch(() => {
+        // ignore errors from logout request
+      });
+    }
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+    delete axios.defaults.headers.common["Authorization"];
     setForm({ name: "", email: "", password: "" });
     setUsers([]);
     setView("login");
