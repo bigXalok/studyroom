@@ -8,10 +8,14 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-app.use(cors());
+
+// Allow configuring frontend origin via environment variable FRONTEND_URL (set this in Render)
+const FRONTEND_URL = process.env.FRONTEND_URL || "*";
+app.use(cors({ origin: FRONTEND_URL }));
  
 const JWT_SECRET = 'okalok'
 const REFRESH_TOKEN_SECRET = 'okalok_refresh' 
+
 
 app.post("/users/signup", async (req, res) => {
   const { name, email, password } = req.body;
@@ -157,6 +161,11 @@ app.get("/users", verifyToken, async (req, res) => {
     console.error("Fetch users error:", error);
     res.status(500).json({ error: "Error fetching users" });
   }
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });
 });
 
 const PORT = process.env.PORT || 3000;

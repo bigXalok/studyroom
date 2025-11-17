@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "Study Room Auth (deployed)",
+    "_postman_id": "studyroom-auth-deployed",
+    "description": "Collection for deployed backend (signup, login, refresh token, users).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users/signup",
+          "host": ["{{baseUrl}}"],
+          "path": ["users", "signup"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "if (json.token) { pm.environment.set('token', json.token); }",
+              "if (json.refreshToken) { pm.environment.set('refreshToken', json.refreshToken); }",
+              "pm.test('Login returned token', function () { pm.expect(json.token).to.exist; });"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{refreshToken}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/token",
+          "host": ["{{baseUrl}}"],
+          "path": ["token"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "if (json.accessToken) { pm.environment.set('token', json.accessToken); }",
+              "if (json.refreshToken) { pm.environment.set('refreshToken', json.refreshToken); }",
+              "pm.test('Refresh returned access token', function () { pm.expect(json.accessToken).to.exist; });"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Get Users (protected)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["users"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    { "key": "baseUrl", "value": "https://studyroom-50pp.onrender.com", "type": "string" },
+    { "key": "name", "value": "Alok", "type": "string" },
+    { "key": "email", "value": "alok@test.com", "type": "string" },
+    { "key": "password", "value": "1234", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "refreshToken", "value": "", "type": "string" }
+  ]
+}

@@ -8,7 +8,8 @@ export default function App() {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
 
-  const API_URL = "http://localhost:3000"; 
+  // Read API URL from Vite env (set VITE_API_URL in Vercel/Vite), fallback to deployed URL
+  const API_URL = import.meta.env.VITE_API_URL || "https://studyroom-50pp.onrender.com";
 
   useEffect(() => {
     const interceptor = axios.interceptors.response.use(
