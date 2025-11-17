@@ -87,9 +87,6 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -109,13 +106,6 @@ exports.Prisma.SortOrder = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
-};
-
-exports.Prisma.UserOrderByRelevanceFieldEnum = {
-  name: 'name',
-  email: 'email',
-  password: 'password',
-  refreshToken: 'refreshToken'
 };
 
 
@@ -160,18 +150,17 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "mysql",
-  "postinstall": false,
+  "activeProvider": "sqlite",
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "fromEnvVar": null,
+        "value": "file:./dev.db"
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/client\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int     @id @default(autoincrement())\n  name         String\n  email        String  @unique\n  password     String\n  refreshToken String?\n}\n",
-  "inlineSchemaHash": "ff5d14ab226014aff3a8a8baf33ac4559dfad86e2f8c2d90cc8f3bd79ec4a0e8",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/client\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = \"file:./dev.db\"\n}\n\nmodel User {\n  id           Int     @id @default(autoincrement())\n  name         String\n  email        String  @unique\n  password     String\n  refreshToken String?\n}\n",
+  "inlineSchemaHash": "3873889cd772a7bb71577d595cafb1e4435f75ed5ccf6f59ece3c12e93a273a2",
   "copyEngine": true
 }
 config.dirname = '/'
@@ -189,9 +178,7 @@ config.engineWasm = {
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
+  parsed: {}
 })
 
 if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {

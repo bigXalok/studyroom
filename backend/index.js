@@ -9,12 +9,11 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
-// Allow configuring frontend origin via environment variable FRONTEND_URL (set this in Render)
 const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 app.use(cors({ origin: FRONTEND_URL }));
  
-const JWT_SECRET = 'okalok'
-const REFRESH_TOKEN_SECRET = 'okalok_refresh' 
+const JWT_SECRET = 'okalok';
+const REFRESH_TOKEN_SECRET = 'okalok_refresh'; 
 
 
 app.post("/users/signup", async (req, res) => {
@@ -55,6 +54,11 @@ app.post("/users/signup", async (req, res) => {
     if (error && error.stack) console.error(error.stack);
     res.status(500).json({ error: error.message || "Error creating user" });
   }
+});
+
+// Helpful GET handler so visiting /users/signup in a browser shows a message
+app.get('/users/signup', (req, res) => {
+  res.status(200).json({ message: 'This endpoint accepts POST requests. Send a POST with {name,email,password} to create a user.' });
 });
 
 
