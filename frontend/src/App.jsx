@@ -65,7 +65,15 @@ export default function App() {
     try {
       const res = await axios.post(`${API_URL}/users/signup`, form);
       setMessage(res.data.message || "Signup successful!");
-      setView("login");
+      // Save tokens from signup response and auto-login
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        if (res.data.refreshToken) localStorage.setItem("refreshToken", res.data.refreshToken);
+        setView("users");
+        fetchUsers();
+      } else {
+        setView("login");
+      }
       setForm({ name: "", email: "", password: "" });
     } catch (err) {
       setMessage(err.response?.data?.error || "Signup failed!");
@@ -187,11 +195,9 @@ export default function App() {
 
       {view === "users" && (
         <div>
-          <h2>Users List</h2>
           <button className="logout" onClick={handleLogout}>
             Logout
           </button>
-  
         </div>
       )}
     </div>

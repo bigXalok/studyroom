@@ -56,7 +56,7 @@ app.post("/users/signup", async (req, res) => {
   }
 });
 
-// Helpful GET handler so visiting /users/signup in a browser shows a message
+
 app.get('/users/signup', (req, res) => {
   res.status(200).json({ message: 'This endpoint accepts POST requests. Send a POST with {name,email,password} to create a user.' });
 });
@@ -170,7 +170,7 @@ app.get("/users", verifyToken, async (req, res) => {
   }
 });
 
-// Health check endpoint
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });
 });
